@@ -4,6 +4,7 @@
 A plugin for [Elite Dangerous Market Connector](https://github.com/Marginal/EDMarketConnector) that transmits commander and selected journal data to [ED:SCC](https://edscc.ddns.net) to aggregate data for data visualization of your squadron.
 
 ![ED:SCC Website Preview](https://i.imgur.com/bD51iI7.png)
+
 Follow the instructions below and if there are any issues contact Shuki25 on the following [Discord](https://discord.gg/qK8kv6g)!  
 
 ## How to install:  
