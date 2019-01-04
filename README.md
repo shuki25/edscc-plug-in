@@ -5,7 +5,7 @@ A plugin for [Elite Dangerous Market Connector](https://github.com/Marginal/EDMa
 
 ![ED:SCC Website Preview](https://i.imgur.com/bD51iI7.png)
 
-Follow the instructions below and if there are any issues contact Shuki25 on the following [Discord](https://discord.gg/qK8kv6g)!  
+**Follow the instructions below** and if there are any issues with the install, contact Shuki25 on the [Discord](https://discord.gg/qK8kv6g)!
 
 ## How to install:  
 1. [Install EDMC by following the instructions]( https://github.com/Marginal/EDMarketConnector )  
@@ -31,7 +31,9 @@ Follow the instructions below and if there are any issues contact Shuki25 on the
 
 7. To get your API key, click on the EDSCC credentials link and you will be redirected to the ED:SCC website and be presented with the API key (you will need to log in first).
 8. Go back to EDMC and enter it in the settings.
-9. If EDSCC Post Status at the bottom says Success, then the data has been successfully sent to the EDSCC!
+9. Start up Elite Dangerous and start flying!
+10. If you see authentication denied message on the bottom of EDMC window, quit back to the main menu and restart your game.  This will fix the authentication errors.
+11. If EDSCC Post Status at the bottom says Success, then the data has been successfully sent to the EDSCC!
 
 ## Need More Help or got Ideas?
-Any suggestions , bugs or help then please contact me on Discord as per above links.
+If you have any suggestions, bugs or need a help then please contact me on Discord as per above links.
