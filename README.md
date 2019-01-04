@@ -10,7 +10,7 @@ Follow the instructions below and if there are any issues contact Shuki25 on the
 1. [Install EDMC by following the instructions]( https://github.com/Marginal/EDMarketConnector )  
 2. Download this plugin
 
-![plugin download]()  
+![plugin download](https://i.imgur.com/myOHCD3.png)  
 
 3. Open Elite Dangerous Market Connector and go to File -> Settings. Then browse to the plugins tab:
 
