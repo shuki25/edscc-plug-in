@@ -128,7 +128,9 @@ def prefs_changed(cmdr, is_beta):
         print edscchosts
         if cmdr in cmdrs:
             idx = cmdrs.index(cmdr)
+            apikeys.extend([''] * (1 + idx - len(apikeys)))
             apikeys[idx] = this.apikey.get().strip()
+            edscchosts.extend([''] * (1 + idx - len(edscchosts)))
             edscchosts[idx] = this.edscchost.get().strip()
         else:
             config.set('edscc_cmdrs', cmdrs + [cmdr])
