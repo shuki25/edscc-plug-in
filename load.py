@@ -120,7 +120,12 @@ def prefs_changed(cmdr, is_beta):
         this.FID = None
         cmdrs = config.get('edscc_cmdrs') or []
         apikeys = config.get('edscc_apikeys') or []
-        edscchosts = config.get('edscc_edscchosts') or []
+        edscchosts = config.get('edscc_edscchosts') or [] 
+        print 'Current Configs'
+        print cmdr
+        print cmdrs
+        print apikeys
+        print edscchosts
         if cmdr in cmdrs:
             idx = cmdrs.index(cmdr)
             apikeys[idx] = this.apikey.get().strip()
@@ -204,3 +209,4 @@ def worker():
                 print 'in exception, retrying %s' % retrying
         else:
             plug.show_error(_("Error: Can't connect to EDSCC"))
+ 
