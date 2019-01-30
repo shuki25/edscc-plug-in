@@ -3,6 +3,7 @@ import sys
 import ttk
 import requests
 import json
+import time
 from Queue import Queue
 from threading import Thread
 
@@ -19,6 +20,7 @@ this.session = requests.Session()
 this.queue = Queue()
 this.msg = " "
 this.cmdr = None
+this.defaultApiHost = 'https://edscc.ddns.net/api/edmc'
 
 _TIMEOUT = 20
 
@@ -49,11 +51,12 @@ def cmdr_data(data, is_beta):
 
 def journal_entry(cmdr, is_beta, system, station, entry, state):
     print 'in journal_entry'
+    entry['timestamp'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
     if config.getint('edsm_out') and not is_beta and credentials(cmdr):
         print 'event: %s' % entry['event']
         form_data = []
 
-        if entry['event'] == 'Statistics':
+        if entry['event'] in ['Statistics', 'LoadGame', 'Commander', 'Rank', 'Progress', 'Bounty', 'CapShipBond', 'FactionKillBond', 'MultiSellExplorationData', 'SellExplorationData', 'SAAScanComplete', 'MarketBuy', 'MarketSell', 'MiningRefined', 'CommunityGoalReward', 'MissionCompleted', 'CommitCrime']:
             form_data.append(entry)
 
         if form_data:
@@ -83,6 +86,11 @@ def plugin_prefs(parent, cmdr, is_beta):
     this.apikey = nb.Entry(frame)
     this.apikey.grid(row=12, column=1, padx=PADX, pady=PADY, sticky=tk.EW)
 
+    this.edscchost_label = nb.Label(frame, text=_('EDSCC API Server'))      # EDSM setting
+    this.edscchost_label.grid(row=14, padx=PADX, sticky=tk.W)
+    this.edscchost = nb.Entry(frame)
+    this.edscchost.grid(row=14, column=1, padx=PADX, pady=PADY, sticky=tk.EW)
+
     prefs_cmdr_changed(cmdr, is_beta)
 
     return frame
@@ -90,15 +98,19 @@ def plugin_prefs(parent, cmdr, is_beta):
 def prefs_cmdr_changed(cmdr, is_beta):
     this.log_button['state'] = cmdr and not is_beta and tk.NORMAL or tk.DISABLED
     this.apikey['state'] = tk.NORMAL
+    this.edscchost['state'] = tk.NORMAL
     this.apikey.delete(0, tk.END)
+    this.edscchost.delete(0, tk.END)
     if cmdr:
         cred = credentials(cmdr)
+        edscchost = apihost(cmdr)
         if cred:
             this.apikey.insert(0, cred)
-    this.label['state'] = this.apikey_label['state'] = this.apikey['state'] = cmdr and not is_beta and this.log.get() and tk.NORMAL or tk.DISABLED
+            this.edscchost.insert(0, edscchost)
+    this.label['state'] = this.apikey_label['state'] = this.apikey['state'] = this.edscchost_label['state'] = this.edscchost['state'] = cmdr and not is_beta and this.log.get() and tk.NORMAL or tk.DISABLED
 
 def prefsvarchanged():
-    this.label['state'] = this.apikey_label['state'] = this.apikey['state'] = this.log.get() and this.log_button['state'] or tk.DISABLED
+    this.label['state'] = this.apikey_label['state'] = this.apikey['state'] = this.edscchost_label['state'] = this.edscchost['state'] = this.log.get() and this.log_button['state'] or tk.DISABLED
 
 def prefs_changed(cmdr, is_beta):
     changed = config.getint('edscc_out') != this.log.get()
@@ -109,21 +121,22 @@ def prefs_changed(cmdr, is_beta):
         this.FID = None
         cmdrs = config.get('edscc_cmdrs') or []
         apikeys = config.get('edscc_apikeys') or []
+        edscchosts = config.get('edscc_edscchosts') or []
         if cmdr in cmdrs:
             idx = cmdrs.index(cmdr)
             apikeys.extend([''] * (1 + idx - len(apikeys)))
             changed |= (apikeys[idx] != this.apikey.get().strip())
             apikeys[idx] = this.apikey.get().strip()
+            edscchosts.extend([''] * (1 + idx - len(apikeys)))
+            changed |= (edscchosts[idx] != this.edscchost.get().strip())
+            edscchosts[idx] = this.edscchost.get().strip()
         else:
             config.set('edscc_cmdrs', cmdrs + [cmdr])
             changed = True
             apikeys.append(this.apikey.get().strip())
+            edscchosts.append(this.edscchost.get().strip())
         config.set('edscc_apikeys', apikeys)
-
-        if this.log.get() and changed:
-            this.newuser = True # Send basic info at next Journal event
-            add_event('getCommanderProfile', time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), { 'searchName': cmdr })
-            call()
+        config.set('edscc_edscchosts', edscchosts)
 
 def credentials(cmdr):
     # Credentials for cmdr
@@ -136,6 +149,19 @@ def credentials(cmdr):
     else:
         return None
 
+def apihost(cmdr):
+    # Credentials for cmdr
+    if not cmdr:
+        return None
+
+    cmdrs = config.get('edscc_cmdrs') or []
+    
+    if cmdr in cmdrs and config.get('edscc_edscchosts'):
+        host = config.get('edscc_edscchosts')[cmdrs.index(cmdr)].strip() or this.defaultApiHost
+        return host
+    else:
+        return this.defaultApiHost
+
 # Worker thread
 def worker():
     while True:
@@ -145,26 +171,28 @@ def worker():
         else:
             (cmdr, data_type, form_data) = item
             (apiKey) = credentials(cmdr)
+            (edscchost) = apihost(cmdr)
 
         retrying = 0
 
         while retrying < 3:
             try:
                 data = {
-                    '_token' : apiKey,
                     'fromSoftware': applongname,
                     'fromSoftwareVersion': appversion,
                     'data': json.dumps(form_data, ensure_ascii=False).encode('utf-8'),
                     'data_type': data_type
                 }
-                r = this.session.post('https://edscc.ddns.net/api/edmc.php', data=data, timeout=_TIMEOUT)
+                header = {
+                    'x-api-key': apiKey
+                }
+                r = this.session.post(edscchost, data=data, timeout=_TIMEOUT, headers=header)
                 this.msg = ''
+                reply = r.json()
                 if r.status_code == 200:
                     this.msg = 'EDSCC Post Succeeded'
-                elif r.status_code == 401:
-                    this.msg = 'EDSCC Authentication Failed'
                 else:
-                    print ('URL Fail' + str(r.status_code))
+                    print ('EDSCC API Post Fail: [' + str(r.status_code) + '] ' + reply['message'])
                     this.msg = 'EDSCC Post Failed'
                     
                 if this.msg:
