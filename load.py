@@ -113,7 +113,6 @@ def prefsvarchanged():
     this.label['state'] = this.apikey_label['state'] = this.apikey['state'] = this.edscchost_label['state'] = this.edscchost['state'] = this.log.get() and this.log_button['state'] or tk.DISABLED
 
 def prefs_changed(cmdr, is_beta):
-    changed = config.getint('edscc_out') != this.log.get()
     config.set('edscc_out', this.log.get())
 
     if cmdr and not is_beta:
@@ -124,19 +123,17 @@ def prefs_changed(cmdr, is_beta):
         edscchosts = config.get('edscc_edscchosts') or []
         if cmdr in cmdrs:
             idx = cmdrs.index(cmdr)
-            apikeys.extend([''] * (1 + idx - len(apikeys)))
-            changed |= (apikeys[idx] != this.apikey.get().strip())
             apikeys[idx] = this.apikey.get().strip()
-            edscchosts.extend([''] * (1 + idx - len(apikeys)))
-            changed |= (edscchosts[idx] != this.edscchost.get().strip())
             edscchosts[idx] = this.edscchost.get().strip()
         else:
             config.set('edscc_cmdrs', cmdrs + [cmdr])
-            changed = True
             apikeys.append(this.apikey.get().strip())
             edscchosts.append(this.edscchost.get().strip())
         config.set('edscc_apikeys', apikeys)
         config.set('edscc_edscchosts', edscchosts)
+        print 'Configs saved'
+        print apikeys
+        print edscchosts
 
 def credentials(cmdr):
     # Credentials for cmdr
