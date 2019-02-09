@@ -20,7 +20,7 @@ this.session = requests.Session()
 this.queue = Queue()
 this.msg = " "
 this.cmdr = None
-this.defaultApiHost = 'https://edscc.ddns.net/api/edmc'
+this.defaultApiHost = 'https://beta.edscc.net/api/edmc'
 
 _TIMEOUT = 20
 
@@ -72,13 +72,13 @@ def plugin_prefs(parent, cmdr, is_beta):
     frame = nb.Frame(parent)
     frame.columnconfigure(1, weight=1)
 
-    HyperlinkLabel(frame, text='EDSCC', background=nb.Label().cget('background'), url='https://edscc.ddns.net/', underline=True).grid(columnspan=2, padx=PADX, sticky=tk.W)     # Don't translate
+    HyperlinkLabel(frame, text='EDSCC', background=nb.Label().cget('background'), url='https://beta.edscc.net/', underline=True).grid(columnspan=2, padx=PADX, sticky=tk.W)     # Don't translate
     this.log = tk.IntVar(value = config.getint('edscc_out') and 1)
     this.log_button = nb.Checkbutton(frame, text=_('Send flight log and Cmdr status to EDSCC'), variable=this.log, command=prefsvarchanged)
     this.log_button.grid(columnspan=2, padx=BUTTONX, pady=(5,0), sticky=tk.W)
 
     nb.Label(frame).grid(sticky=tk.W)   # big spacer 
-    this.label = HyperlinkLabel(frame, text=_('EDSCC credentials'), background=nb.Label().cget('background'), url='https://edscc.ddns.net/settings-api', underline=True)        # Section heading in settings
+    this.label = HyperlinkLabel(frame, text=_('EDSCC credentials'), background=nb.Label().cget('background'), url='https://beta.edscc.net/settings-api', underline=True)        # Section heading in settings
     this.label.grid(columnspan=2, padx=PADX, sticky=tk.W)
 
     this.apikey_label = nb.Label(frame, text=_('API Key'))      # EDSM setting
