@@ -56,7 +56,7 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
         print 'event: %s' % entry['event']
         form_data = []
 
-        if entry['event'] in ['Statistics', 'LoadGame', 'Commander', 'Rank', 'Progress', 'Bounty', 'CapShipBond', 'FactionKillBond', 'MultiSellExplorationData', 'SellExplorationData', 'SAAScanComplete', 'MarketBuy', 'MarketSell', 'MiningRefined', 'CommunityGoalReward', 'MissionCompleted', 'CommitCrime', 'RedeemVoucher']:
+        if entry['event'] in ['Statistics', 'LoadGame', 'Commander', 'Rank', 'Progress', 'Bounty', 'CapShipBond', 'FactionKillBond', 'MultiSellExplorationData', 'SellExplorationData', 'SAAScanComplete', 'MarketBuy', 'MarketSell', 'MiningRefined', 'CommunityGoalReward', 'MissionCompleted', 'CommitCrime', 'RedeemVoucher', 'Docked', 'Undocked']:
             form_data.append(entry)
 
         if form_data:
