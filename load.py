@@ -40,7 +40,7 @@ def cmdr_data(data, is_beta):
     
     this.cmdr = data['commander']['name']
 
-    if config.getint('edsm_out') and not is_beta and credentials(this.cmdr):
+    if config.getint('edscc_out') and not is_beta and credentials(this.cmdr):
         form_data = {
             'commander' : data['commander'],
             'lastSystem' : data['lastSystem'],
@@ -52,7 +52,7 @@ def cmdr_data(data, is_beta):
 def journal_entry(cmdr, is_beta, system, station, entry, state):
     print 'in journal_entry'
     entry['timestamp'] = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-    if config.getint('edsm_out') and not is_beta and credentials(cmdr):
+    if config.getint('edscc_out') and not is_beta and credentials(cmdr):
         print 'event: %s' % entry['event']
         form_data = []
 
@@ -81,12 +81,12 @@ def plugin_prefs(parent, cmdr, is_beta):
     this.label = HyperlinkLabel(frame, text=_('EDSCC credentials'), background=nb.Label().cget('background'), url='https://beta.edscc.net/settings-api', underline=True)        # Section heading in settings
     this.label.grid(columnspan=2, padx=PADX, sticky=tk.W)
 
-    this.apikey_label = nb.Label(frame, text=_('API Key'))      # EDSM setting
+    this.apikey_label = nb.Label(frame, text=_('API Key'))      # EDSCC setting
     this.apikey_label.grid(row=12, padx=PADX, sticky=tk.W)
     this.apikey = nb.Entry(frame)
     this.apikey.grid(row=12, column=1, padx=PADX, pady=PADY, sticky=tk.EW)
 
-    this.edscchost_label = nb.Label(frame, text=_('EDSCC API Server'))      # EDSM setting
+    this.edscchost_label = nb.Label(frame, text=_('EDSCC API Server'))      # EDSCC setting
     this.edscchost_label.grid(row=14, padx=PADX, sticky=tk.W)
     this.edscchost = nb.Entry(frame)
     this.edscchost.grid(row=14, column=1, padx=PADX, pady=PADY, sticky=tk.EW)
