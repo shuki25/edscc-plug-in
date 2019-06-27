@@ -14,6 +14,11 @@ import myNotebook as nb
 from config import appname, applongname, appversion, config
 import companion
 import plug
+import sys
+import codecs
+
+sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+sys.stderr = codecs.getwriter('utf8')(sys.stderr)
 
 this = sys.modules[__name__]
 this.session = requests.Session()
